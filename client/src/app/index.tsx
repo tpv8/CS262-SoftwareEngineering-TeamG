@@ -1,3 +1,6 @@
+// Landing screen (route "/") — the app's introductory page. It pitches
+// Calvin Finder with a hero message and feature list, then hands off to the
+// data-driven Finder screen (src/app/finder.tsx) via the CTA button.
 import { Text, View, Pressable, StyleSheet } from "react-native";
 import { Stack, useRouter, type Href } from "expo-router";
 import {
@@ -9,6 +12,7 @@ import {
   Inter_800ExtraBold,
 } from "@expo-google-fonts/inter";
 
+// Shared color palette for this screen.
 const ACCENT = "#208AEF";
 const INK = "#101828";
 const SUBTLE = "#5B6472";
@@ -16,6 +20,8 @@ const BG = "#F6F8FB";
 const CARD_BG = "#FFFFFF";
 const BORDER = "#E6EAF0";
 
+// Hard-coded (mocked) feature blurbs shown on the landing page. Exported so
+// tests can assert every feature card actually renders.
 export const FEATURES = [
   {
     icon: "🔍",
@@ -41,6 +47,8 @@ const FINDER_ROUTE = "/finder" as Href;
 export default function Landing() {
   const router = useRouter();
 
+  // Custom fonts load asynchronously; render an empty placeholder until
+  // they're ready so text doesn't flash in the default system font first.
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -55,8 +63,10 @@ export default function Landing() {
 
   return (
     <View style={styles.container} testID="landing-screen">
+      {/* Hide the default expo-router header; this screen has its own hero. */}
       <Stack.Screen options={{ headerShown: false }} />
 
+      {/* Hero: app name, headline, and short pitch. */}
       <View style={styles.hero}>
         <Text style={styles.eyebrow}>CALVIN FINDER</Text>
         <Text style={styles.title} testID="landing-title">
@@ -64,10 +74,11 @@ export default function Landing() {
         </Text>
         <Text style={styles.subtitle}>
           Search any room or building and get pinned live on an interactive
-          map of Calvin's campus.
+          map of Calvin&apos;s campus.
         </Text>
       </View>
 
+      {/* One card per mocked feature in FEATURES. */}
       <View style={styles.featureList}>
         {FEATURES.map((feature) => (
           <View key={feature.title} style={styles.featureCard}>
@@ -80,6 +91,7 @@ export default function Landing() {
         ))}
       </View>
 
+      {/* Primary call to action: push the Finder screen onto the stack. */}
       <Pressable
         testID="get-started-button"
         style={({ pressed }) => [

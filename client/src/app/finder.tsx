@@ -1,3 +1,6 @@
+// Finder screen (route "/finder") — the app's main data screen. Lets a user
+// pick a campus location from a dropdown (highlighting it on a mock map) and
+// filter which points of interest are shown, all backed by hard-coded data.
 import { useState } from "react";
 import { Text, View, Pressable, ScrollView, StyleSheet } from "react-native";
 import { Stack, useRouter } from "expo-router";
@@ -9,6 +12,7 @@ import {
   Inter_700Bold,
 } from "@expo-google-fonts/inter";
 
+// Shared color palette for this screen.
 const ACCENT = "#208AEF";
 const INK = "#101828";
 const SUBTLE = "#5B6472";
@@ -16,6 +20,8 @@ const CARD_BG = "#FFFFFF";
 const BORDER = "#E6EAF0";
 const MAP_BG = "#E7F0FE";
 
+// Mocked campus locations. `top`/`left` are percentage offsets used to
+// position each pin over the (also mocked) map background.
 export const LOCATIONS = [
   { name: "Hekman Library", top: "22%", left: "38%" },
   { name: "Covenant Fine Arts Center", top: "32%", left: "18%" },
@@ -31,8 +37,11 @@ export const LOCATIONS = [
   { name: "Commons", top: "60%", left: "72%" },
 ] as const;
 
+// Derives a union of literal location names ("Hekman Library" | ...) from
+// the LOCATIONS data itself, so the type always stays in sync with the data.
 type LocationName = (typeof LOCATIONS)[number]["name"];
 
+// Mocked category filters shown in the horizontal checklist above the map.
 export const POINTS_OF_INTEREST = [
   "Restrooms",
   "Printers",
@@ -44,12 +53,17 @@ type PointOfInterest = (typeof POINTS_OF_INTEREST)[number];
 
 export default function Finder() {
   const router = useRouter();
+  // Which location is highlighted on the map / shown in the result card.
   const [selected, setSelected] = useState<LocationName>(LOCATIONS[0].name);
+  // Whether the location dropdown list is expanded.
   const [open, setOpen] = useState(false);
+  // Which POI checkboxes are currently checked. A Set makes toggling and
+  // membership checks (`.has`) simple, since order doesn't matter here.
   const [activePois, setActivePois] = useState<Set<PointOfInterest>>(
     () => new Set(),
   );
 
+  // Flips a single POI's checked state without mutating the previous Set.
   const togglePoi = (poi: PointOfInterest) => {
     setActivePois((prev) => {
       const next = new Set(prev);
@@ -62,6 +76,8 @@ export default function Finder() {
     });
   };
 
+  // Custom fonts load asynchronously; render an empty placeholder until
+  // they're ready so text doesn't flash in the default system font first.
   const [fontsLoaded] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -73,13 +89,16 @@ export default function Finder() {
     return <View style={styles.container} testID="finder-loading" />;
   }
 
+  // Look up the full location record for whichever name is selected, so we
+  // can show its details in the result card below.
   const activeLocation = LOCATIONS.find((l) => l.name === selected);
 
   return (
     <View style={styles.container} testID="finder-screen">
+      {/* Hide the default expo-router header; this screen has its own. */}
       <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Header */}
+      {/* Header: back button returns to the landing screen. */}
       <View style={styles.header}>
         <Pressable
           testID="back-button"
@@ -91,7 +110,8 @@ export default function Finder() {
         <Text style={styles.headerTitle}>Calvin Finder</Text>
       </View>
 
-      {/* Points of interest navbar */}
+      {/* Horizontally scrollable checklist: tapping a POI toggles its
+          checkbox via togglePoi. */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -117,7 +137,9 @@ export default function Finder() {
       </ScrollView>
 
       <View style={styles.mapContainer}>
-        {/* Map */}
+        {/* Mock map: one dot per LOCATIONS entry, positioned with its
+            top/left percentages. The selected location's dot is enlarged
+            and colored via the pinActive style. */}
         <View style={styles.mapArea}>
           {LOCATIONS.map((loc) => (
             <View
@@ -131,7 +153,8 @@ export default function Finder() {
           ))}
         </View>
 
-        {/* Dropdown */}
+        {/* Dropdown: trigger shows the current selection; tapping it toggles
+            `open` to reveal the full LOCATIONS list below. */}
         <View style={styles.dropdownWrap}>
           <Pressable
             testID="location-dropdown-trigger"
@@ -155,6 +178,8 @@ export default function Finder() {
                     pressed && styles.dropdownItemPressed,
                   ]}
                   onPress={() => {
+                    // Choosing an option updates the selection and closes
+                    // the dropdown in one tap.
                     setSelected(loc.name);
                     setOpen(false);
                   }}
@@ -173,11 +198,13 @@ export default function Finder() {
           )}
         </View>
 
+        {/* Full-screen tap target that closes the dropdown when the user
+            taps outside of it. */}
         {open && (
           <Pressable style={styles.backdrop} onPress={() => setOpen(false)} />
         )}
 
-        {/* Selected location card */}
+        {/* Card summarizing whichever location is currently selected. */}
         {activeLocation && (
           <View style={styles.resultCard} testID="result-card">
             <Text style={styles.resultTitle}>{activeLocation.name}</Text>
