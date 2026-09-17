@@ -10,7 +10,7 @@ A product in development for CS 262 - Software Engineering
 - Jonathan Barrantes Segovia
 
 <br>
-**Vision Statement:**
+Vision statement
 <br>
 CalvinFinder is for anyone visiting or navigating Calvin University who needs an easier way to find classes, buildings, and points of interest. CalvinFinder is a mobile app that makes exploring campus more convenient by helping users locate places both inside and outside buildings. Unlike previous attempts at campus navigation apps, our product combines classroom locations with points of interest such as vending machines, printers, and more in one accessible platform.
 
