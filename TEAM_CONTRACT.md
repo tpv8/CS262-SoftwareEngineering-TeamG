@@ -41,3 +41,4 @@ Absent such communication, the following will apply when work is not completed b
 Joshua Rogan
 Josh Julian
 Faith Liz Nsengiyumva
+Ty Veldhouse
