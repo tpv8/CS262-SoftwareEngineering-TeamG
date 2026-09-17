@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Text, View, Pressable, ScrollView, StyleSheet } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import {
   useFonts,
   Inter_400Regular,
@@ -16,7 +16,7 @@ const CARD_BG = "#FFFFFF";
 const BORDER = "#E6EAF0";
 const MAP_BG = "#E7F0FE";
 
-const LOCATIONS = [
+export const LOCATIONS = [
   { name: "Hekman Library", top: "22%", left: "38%" },
   { name: "Covenant Fine Arts Center", top: "32%", left: "18%" },
   { name: "Spoelhof Center", top: "44%", left: "50%" },
@@ -33,7 +33,7 @@ const LOCATIONS = [
 
 type LocationName = (typeof LOCATIONS)[number]["name"];
 
-const POINTS_OF_INTEREST = [
+export const POINTS_OF_INTEREST = [
   "Restrooms",
   "Printers",
   "Water Fountains",
@@ -42,7 +42,8 @@ const POINTS_OF_INTEREST = [
 
 type PointOfInterest = (typeof POINTS_OF_INTEREST)[number];
 
-export default function Index() {
+export default function Finder() {
+  const router = useRouter();
   const [selected, setSelected] = useState<LocationName>(LOCATIONS[0].name);
   const [open, setOpen] = useState(false);
   const [activePois, setActivePois] = useState<Set<PointOfInterest>>(
@@ -69,17 +70,24 @@ export default function Index() {
   });
 
   if (!fontsLoaded) {
-    return <View style={styles.container} />;
+    return <View style={styles.container} testID="finder-loading" />;
   }
 
   const activeLocation = LOCATIONS.find((l) => l.name === selected);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="finder-screen">
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
       <View style={styles.header}>
+        <Pressable
+          testID="back-button"
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.backButtonText}>{"‹"}</Text>
+        </Pressable>
         <Text style={styles.headerTitle}>Calvin Finder</Text>
       </View>
 
@@ -95,6 +103,7 @@ export default function Index() {
           return (
             <Pressable
               key={poi}
+              testID={`poi-${poi}`}
               style={styles.poiItem}
               onPress={() => togglePoi(poi)}
             >
@@ -125,6 +134,7 @@ export default function Index() {
         {/* Dropdown */}
         <View style={styles.dropdownWrap}>
           <Pressable
+            testID="location-dropdown-trigger"
             style={styles.dropdownTrigger}
             onPress={() => setOpen((v) => !v)}
           >
@@ -135,10 +145,11 @@ export default function Index() {
           </Pressable>
 
           {open && (
-            <View style={styles.dropdownList}>
+            <View style={styles.dropdownList} testID="location-dropdown-list">
               {LOCATIONS.map((loc) => (
                 <Pressable
                   key={loc.name}
+                  testID={`location-option-${loc.name}`}
                   style={({ pressed }) => [
                     styles.dropdownItem,
                     pressed && styles.dropdownItemPressed,
@@ -168,7 +179,7 @@ export default function Index() {
 
         {/* Selected location card */}
         {activeLocation && (
-          <View style={styles.resultCard}>
+          <View style={styles.resultCard} testID="result-card">
             <Text style={styles.resultTitle}>{activeLocation.name}</Text>
             <Text style={styles.resultSubtitle}>Showing on the map</Text>
           </View>
@@ -184,12 +195,25 @@ const styles = StyleSheet.create({
     backgroundColor: CARD_BG,
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingTop: 56,
     paddingBottom: 16,
     paddingHorizontal: 20,
     backgroundColor: CARD_BG,
     borderBottomWidth: 1,
     borderBottomColor: BORDER,
+  },
+  backButton: {
+    marginRight: 12,
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  backButtonText: {
+    fontFamily: "Inter_700Bold",
+    fontSize: 26,
+    color: INK,
+    lineHeight: 26,
   },
   headerTitle: {
     fontFamily: "Inter_700Bold",
