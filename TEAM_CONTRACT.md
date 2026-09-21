@@ -20,7 +20,7 @@
 
 -	All tasks will be completed 1-2 days before sprint deadline
 
--	Group members will complete their assigned tasks, with a lower general limit of 3 hours a week spent on assignments
+-	Group members will complete their assigned tasks, with each member spending 6-9 hours a week spent on assignments
 
 -	Task assignments will be roughly balanced between members, excepting arrangements made due to absence, illness, tests, other work, or the like
 
