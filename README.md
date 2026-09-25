@@ -2,7 +2,7 @@
 A product in development for CS 262 - Software Engineering
 <br><br>[Link to Team Contract](https://github.com/tpv8/CS262-SoftwareEngineering-TeamG/blob/7d60b9f4ccc204b4507acd7b96c3cf4adaec68c4/TEAM_CONTRACT.md)
 
-<br><br>**Group Memebers**:
+<br><br>**Group Members**:
 - Joshua Rogan
 - Josh Julian
 - Faith Liz Nsengiyumva

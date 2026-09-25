@@ -42,3 +42,4 @@ Joshua Rogan
 Josh Julian
 Faith Liz Nsengiyumva
 Ty Veldhouse
+Jonathan David Barrantes Segovia
